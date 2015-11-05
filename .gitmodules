@@ -1,0 +1,3 @@
+[submodule "assets/postgres-test-app"]
+	path = assets/postgres-test-app
+	url = https://github.com/starkandwayne/postgres-test-app
