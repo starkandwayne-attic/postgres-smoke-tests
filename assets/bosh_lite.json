@@ -1,0 +1,12 @@
+{
+  "service_name": "postgres",
+  "plan_names": [
+                     "shared"
+                       ],
+  "apps_domain": "bosh-lite.com", 
+  "api": "https://api.bosh-lite.com",
+  "admin_user": "admin",
+  "admin_password": "admin",
+  "create_permissive_security_group": true,
+  "skip_ssl_validation": true
+}
