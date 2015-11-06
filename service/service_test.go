@@ -22,7 +22,7 @@ import (
 )
 
 //Number of insertions to make into the database when insertion testing.
-const NUM_INSERTIONS int = 25
+const NUM_INSERTIONS int = 10
 const MAX_KEY_LENGTH int32 = 30
 
 type postgresTestConfig struct {
@@ -311,7 +311,7 @@ var _ = Describe("RDPG Service Broker", func() {
 			fmt.Printf("\n--Verifying that schema %s was dropped.", schemaName)
 			sql = fmt.Sprintf("SELECT schema_name FROM information_schema.schemata WHERE schema_name='%s';", schemaName)
 			Consistently(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).ShouldNot(Or(Say("FAILURE"), Say("\\[")))
-
+			/* THESE ARE REALLY ONLY VALID FOR THE BDR DATABASE... AND THATS GOING AWAY SO... COMMENTED OUT
 			//Time to start doing some stuff that the database should not allow
 			fmt.Printf("\n--Attempting to create SCHEMA bdr. Failure if this is allowed.")
 			sql = fmt.Sprintf("CREATE SCHEMA bdr;")
@@ -324,7 +324,7 @@ var _ = Describe("RDPG Service Broker", func() {
 			fmt.Printf("\n--Attempting to create table table in schema bdr")
 			sql = fmt.Sprintf("CREATE TABLE bdr.asdf(key varchar(255), value varchar(255));")
 			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("FAILURE"))
-
+			*/
 			//TODO: Test if table in bdr schema can be modified
 			//TODO: Test if table can be dropped from bdr schema
 			//These can't be done yet - pending the tables of bdr actually becoming visible.
