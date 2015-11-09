@@ -4,5 +4,7 @@ set -e
 set -x
 
 go install -v github.com/onsi/ginkgo/ginkgo
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd ${DIR}/../service
 
-CF_COLOR=false CF_VERBOSE_OUTPUT=true ginkgo -r -v -noColor=true -keepGoing=true -trace=true -slowSpecThreshold=300
+GO15VENDOREXPERIMENT=1 CF_COLOR=false CF_VERBOSE_OUTPUT=true ginkgo -r -v -noColor=true -keepGoing=true -trace=true -slowSpecThreshold=300
