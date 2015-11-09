@@ -12,9 +12,9 @@ package remote
 import (
 	"time"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/reporters/stenographer"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/types"
+	"github.com/onsi/ginkgo/config"
+	"github.com/onsi/ginkgo/reporters/stenographer"
+	"github.com/onsi/ginkgo/types"
 )
 
 type configAndSuite struct {

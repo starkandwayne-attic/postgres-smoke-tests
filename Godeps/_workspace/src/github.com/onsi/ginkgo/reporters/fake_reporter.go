@@ -1,8 +1,8 @@
 package reporters
 
 import (
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/types"
+	"github.com/onsi/ginkgo/config"
+	"github.com/onsi/ginkgo/types"
 )
 
 //FakeReporter is useful for testing purposes

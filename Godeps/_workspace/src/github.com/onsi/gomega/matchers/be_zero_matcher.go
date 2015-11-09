@@ -1,7 +1,7 @@
 package matchers
 
 import (
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/gomega/format"
+	"github.com/onsi/gomega/format"
 	"reflect"
 )
 

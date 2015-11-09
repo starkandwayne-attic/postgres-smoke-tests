@@ -6,12 +6,12 @@ import (
 	"strings"
 	"time"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
+	"github.com/onsi/ginkgo"
+	"github.com/onsi/ginkgo/config"
 
-	. "postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/gomega"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/gomega/gbytes"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/gomega/gexec"
+	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gbytes"
+	"github.com/onsi/gomega/gexec"
 )
 
 const timeFormat = "2006-01-02 15:04:05.00 (MST)"

@@ -4,7 +4,7 @@ import (
 	"flag"
 	"runtime"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
+	"github.com/onsi/ginkgo/config"
 )
 
 type RunWatchAndBuildCommandFlags struct {

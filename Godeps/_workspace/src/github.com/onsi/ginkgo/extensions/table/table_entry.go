@@ -3,7 +3,7 @@ package table
 import (
 	"reflect"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo"
+	"github.com/onsi/ginkgo"
 )
 
 /*

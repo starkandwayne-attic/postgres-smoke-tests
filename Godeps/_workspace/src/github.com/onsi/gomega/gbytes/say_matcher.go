@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/gomega/format"
+	"github.com/onsi/gomega/format"
 )
 
 //Objects satisfying the BufferProvider can be used with the Say matcher.

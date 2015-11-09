@@ -9,16 +9,16 @@ import (
 	"strings"
 	"time"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/pborman/uuid"
+	"github.com/pborman/uuid"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/cloudfoundry-incubator/cf-test-helpers/cf"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/cloudfoundry-incubator/cf-test-helpers/runner"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/cloudfoundry-incubator/cf-test-helpers/services"
+	"github.com/cloudfoundry-incubator/cf-test-helpers/cf"
+	"github.com/cloudfoundry-incubator/cf-test-helpers/runner"
+	"github.com/cloudfoundry-incubator/cf-test-helpers/services"
 
-	. "postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo"
-	. "postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/gomega"
-	. "postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/gomega/gbytes"
-	. "postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/gomega/gexec"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	. "github.com/onsi/gomega/gbytes"
+	. "github.com/onsi/gomega/gexec"
 )
 
 //Number of insertions to make into the database when insertion testing.
@@ -34,6 +34,9 @@ type postgresTestConfig struct {
 
 func loadConfig() (testConfig postgresTestConfig) {
 	path := os.Getenv("CONFIG_PATH")
+	if path == "" {
+		panic("No Config Path was Set!")
+	}
 	configFile, err := os.Open(path)
 	if err != nil {
 		panic(err)

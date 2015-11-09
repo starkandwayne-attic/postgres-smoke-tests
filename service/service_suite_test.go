@@ -3,8 +3,8 @@ package service_test
 import (
 	"testing"
 
-	. "postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo"
-	. "postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/gomega"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 func TestService(t *testing.T) {

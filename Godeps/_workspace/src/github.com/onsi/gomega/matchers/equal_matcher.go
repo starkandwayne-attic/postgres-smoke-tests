@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/gomega/format"
+	"github.com/onsi/gomega/format"
 )
 
 type EqualMatcher struct {

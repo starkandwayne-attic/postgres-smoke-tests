@@ -2,10 +2,10 @@ package leafnodes
 
 import (
 	"encoding/json"
+	"github.com/onsi/ginkgo/internal/failer"
+	"github.com/onsi/ginkgo/types"
 	"io/ioutil"
 	"net/http"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/failer"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/types"
 	"time"
 )
 

@@ -2,8 +2,8 @@ package matchers
 
 import (
 	"fmt"
+	"github.com/onsi/gomega/format"
 	"math"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/gomega/format"
 )
 
 type BeNumericallyMatcher struct {

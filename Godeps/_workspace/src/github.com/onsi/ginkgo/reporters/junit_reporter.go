@@ -11,9 +11,9 @@ package reporters
 import (
 	"encoding/xml"
 	"fmt"
+	"github.com/onsi/ginkgo/config"
+	"github.com/onsi/ginkgo/types"
 	"os"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/types"
 	"strings"
 )
 

@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/ginkgo/interrupthandler"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/ginkgo/testrunner"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/ginkgo/testsuite"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/ginkgo/watch"
+	"github.com/onsi/ginkgo/config"
+	"github.com/onsi/ginkgo/ginkgo/interrupthandler"
+	"github.com/onsi/ginkgo/ginkgo/testrunner"
+	"github.com/onsi/ginkgo/ginkgo/testsuite"
+	"github.com/onsi/ginkgo/ginkgo/watch"
 )
 
 func BuildWatchCommand() *Command {

@@ -14,11 +14,11 @@ import (
 	"syscall"
 	"time"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/ginkgo/testsuite"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/remote"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/reporters/stenographer"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/types"
+	"github.com/onsi/ginkgo/config"
+	"github.com/onsi/ginkgo/ginkgo/testsuite"
+	"github.com/onsi/ginkgo/internal/remote"
+	"github.com/onsi/ginkgo/reporters/stenographer"
+	"github.com/onsi/ginkgo/types"
 )
 
 type TestRunner struct {

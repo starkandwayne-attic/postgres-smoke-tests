@@ -7,12 +7,12 @@ import (
 	"sync"
 	"syscall"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/leafnodes"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/spec"
-	Writer "postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/writer"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/reporters"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/types"
+	"github.com/onsi/ginkgo/config"
+	"github.com/onsi/ginkgo/internal/leafnodes"
+	"github.com/onsi/ginkgo/internal/spec"
+	Writer "github.com/onsi/ginkgo/internal/writer"
+	"github.com/onsi/ginkgo/reporters"
+	"github.com/onsi/ginkgo/types"
 
 	"time"
 )

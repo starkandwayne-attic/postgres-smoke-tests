@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
+	"github.com/onsi/ginkgo/config"
 )
 
 func BuildVersionCommand() *Command {

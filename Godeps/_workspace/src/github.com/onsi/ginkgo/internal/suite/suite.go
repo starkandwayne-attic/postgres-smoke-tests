@@ -4,15 +4,15 @@ import (
 	"math/rand"
 	"time"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/containernode"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/failer"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/leafnodes"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/spec"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/specrunner"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/writer"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/reporters"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/types"
+	"github.com/onsi/ginkgo/config"
+	"github.com/onsi/ginkgo/internal/containernode"
+	"github.com/onsi/ginkgo/internal/failer"
+	"github.com/onsi/ginkgo/internal/leafnodes"
+	"github.com/onsi/ginkgo/internal/spec"
+	"github.com/onsi/ginkgo/internal/specrunner"
+	"github.com/onsi/ginkgo/internal/writer"
+	"github.com/onsi/ginkgo/reporters"
+	"github.com/onsi/ginkgo/types"
 )
 
 type ginkgoTestingT interface {

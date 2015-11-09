@@ -2,9 +2,9 @@ package leafnodes
 
 import (
 	"fmt"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/codelocation"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/internal/failer"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/types"
+	"github.com/onsi/ginkgo/internal/codelocation"
+	"github.com/onsi/ginkgo/internal/failer"
+	"github.com/onsi/ginkgo/types"
 	"reflect"
 	"time"
 )

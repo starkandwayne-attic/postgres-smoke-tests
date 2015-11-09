@@ -7,11 +7,11 @@ import (
 	"os"
 	"time"
 
-	ginkgoconfig "postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/config"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/gomega"
+	ginkgoconfig "github.com/onsi/ginkgo/config"
+	"github.com/onsi/gomega"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/cloudfoundry-incubator/cf-test-helpers/cf"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/cloudfoundry-incubator/cf-test-helpers/runner"
+	"github.com/cloudfoundry-incubator/cf-test-helpers/cf"
+	"github.com/cloudfoundry-incubator/cf-test-helpers/runner"
 )
 
 type Context interface {

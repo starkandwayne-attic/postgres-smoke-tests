@@ -3,10 +3,10 @@ package main
 import (
 	"bufio"
 	"flag"
+	"github.com/onsi/ginkgo/ginkgo/nodot"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/ginkgo/nodot"
 	"regexp"
 )
 

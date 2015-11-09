@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/onsi/ginkgo/ginkgo/convert"
 	"os"
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/ginkgo/convert"
 )
 
 func BuildConvertCommand() *Command {

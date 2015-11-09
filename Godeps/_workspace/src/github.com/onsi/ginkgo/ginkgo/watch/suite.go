@@ -5,7 +5,7 @@ import (
 	"math"
 	"time"
 
-	"postgres-smoke-tests/Godeps/_workspace/src/github.com/onsi/ginkgo/ginkgo/testsuite"
+	"github.com/onsi/ginkgo/ginkgo/testsuite"
 )
 
 type Suite struct {
