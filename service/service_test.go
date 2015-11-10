@@ -22,7 +22,9 @@ import (
 )
 
 //Number of insertions to make into the database when insertion testing.
-const NUM_INSERTIONS int = 10
+var NUM_INSERTIONS int
+
+const DEFAULT_NUM_INSERTIONS = 10
 const MAX_KEY_LENGTH int32 = 30
 
 type postgresTestConfig struct {
@@ -107,6 +109,18 @@ var _ = Describe("RDPG Service Broker", func() {
 	}
 
 	BeforeSuite(func() {
+		numInsertionsEnv := os.Getenv("NUM_INSERTIONS")
+		if numInsertionsEnv == "" {
+			NUM_INSERTIONS = DEFAULT_NUM_INSERTIONS
+			DefaultNumAsString := strconv.Itoa(DEFAULT_NUM_INSERTIONS)
+			fmt.Println("DEFAULTING NUMBER OF INSERTIONS TO: " + DefaultNumAsString)
+		} else {
+			var err error
+			NUM_INSERTIONS, err = strconv.Atoi(numInsertionsEnv)
+			if err != nil {
+				panic("Unable to parse NUM_INSERTIONS environment variable as integer")
+			}
+		}
 		config.TimeoutScale = 3
 		services.NewContext(config.Config, "rdpg-postgres-smoke-test").Setup()
 	})
@@ -163,7 +177,7 @@ var _ = Describe("RDPG Service Broker", func() {
 			//Let's do some insertions to both tables
 			//First, let's generate the values to insert. I've decided on random values, because the database SHOULD be able to handle that...
 			//  and I hope don't end up regretting that decision for testing reasons.
-			var valuesToInsert [NUM_INSERTIONS]string
+			valuesToInsert := make([]string, NUM_INSERTIONS, NUM_INSERTIONS)
 			for i := 0; i < NUM_INSERTIONS; i++ {
 				valuesToInsert[i] = randomName()
 				//Tests would get sort of ugly if any of these, by some unlikely chance, ended up being the same key string
