@@ -120,6 +120,7 @@ var _ = Describe("RDPG Service Broker", func() {
 			if err != nil {
 				panic("Unable to parse NUM_INSERTIONS environment variable as integer")
 			}
+			fmt.Println("SET NUM_INSERTIONS TO: " + numInsertionsEnv)
 		}
 		config.TimeoutScale = 3
 		services.NewContext(config.Config, "rdpg-postgres-smoke-test").Setup()
