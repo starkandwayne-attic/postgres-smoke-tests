@@ -5,7 +5,7 @@ set -x
 
 projectPath="$( dirname "$( dirname "${BASH_SOURCE[0]}" )" )"
 mkdir -p var/vcap/packages/postgres-smoke-tests/src/github.com/onsi
-cp ${projectPath}/vendor/github.com/onsi/ \
+cp ${projectPath}/vendor/github.com/onsi/* \
   var/vcap/packages/postgres-smoke-tests/src/github.com/onsi/
 
 cd ${projectPath}
