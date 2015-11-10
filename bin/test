@@ -4,13 +4,8 @@ set -e
 set -x
 
 projectPath="$( dirname "$( dirname "${BASH_SOURCE[0]}" )" )"
-mkdir -p var/vcap/packages/postgres-smoke-tests/src/github.com/onsi
-cp ${projectPath}/vendor/github.com/onsi/* \
-  var/vcap/packages/postgres-smoke-tests/src/github.com/onsi/
-
-cd ${projectPath}
-go install -v github.com/onsi/ginkgo/ginkgo
 
 cd ${projectPath}/service
+
 
 GO15VENDOREXPERIMENT=1 CF_COLOR=false CF_VERBOSE_OUTPUT=true ginkgo -r -v -noColor=true -keepGoing=true -trace=true -slowSpecThreshold=300
