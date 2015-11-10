@@ -4,7 +4,8 @@ set -e
 set -x
 
 projectPath="$( dirname "$( dirname "${BASH_SOURCE[0]}" )" )"
-rsync -a ${projectPath}/vendor/github.com/onsi/ \
+mkdir -p var/vcap/packages/postgres-smoke-tests/src/github.com/onsi
+cp ${projectPath}/vendor/github.com/onsi/ \
   var/vcap/packages/postgres-smoke-tests/src/github.com/onsi/
 
 cd ${projectPath}
