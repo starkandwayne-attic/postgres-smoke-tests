@@ -136,14 +136,29 @@ var _ = Describe("RDPG Service Broker", func() {
 	})
 
 	AssertLifeCycleBehavior := func(planName string) {
-		It("can create, bind to, write to, read from, unbind, and destroy a service instance using the "+planName+" plan", func() {
-			serviceInstanceName := randomServiceName()
+		serviceInstanceName := randomServiceName()
+		serviceCreated := false
+		serviceBound := false
 
+		BeforeEach(func() {
 			Eventually(cf.Cf("create-service", config.ServiceName, planName, serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
+			serviceCreated = true
 			Eventually(cf.Cf("bind-service", appName, serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
+			serviceBound = true
 			Eventually(cf.Cf("start", appName), config.ScaledTimeout(5*time.Minute)).Should(Exit(0))
 			assertAppIsRunning(appName)
+		})
 
+		AfterEach(func() {
+			if serviceBound {
+				Eventually(cf.Cf("unbind-service", appName, serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
+			}
+			if serviceCreated {
+				Eventually(cf.Cf("delete-service", "-f", serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
+			}
+		})
+
+		It("can create, bind to, write to, read from, unbind, and destroy a service instance using the "+planName+" plan", func() {
 			//Successful endpoint calls respond 200 and their first line is "SUCCESS"
 
 			//Can't get the timestamp from the database if a connection wasn't made.
@@ -347,8 +362,6 @@ var _ = Describe("RDPG Service Broker", func() {
 			//TODO: Test if table can be dropped from bdr schema
 			//These can't be done yet - pending the tables of bdr actually becoming visible.
 
-			Eventually(cf.Cf("unbind-service", appName, serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
-			Eventually(cf.Cf("delete-service", "-f", serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
 		})
 	}
 
