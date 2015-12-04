@@ -126,39 +126,29 @@ var _ = Describe("RDPG Service Broker", func() {
 		services.NewContext(config.Config, "rdpg-postgres-smoke-test").Setup()
 	})
 
-	BeforeEach(func() {
+	It("can push the application to Cloud Foundry", func() {
 		appName = randomServiceName()
 		Eventually(cf.Cf("push", appName, "-m", "256M", "-p", appPath, "-s", "cflinuxfs2", "--no-start"), config.ScaledTimeout(timeout)).Should(Exit(0))
-	})
-
-	AfterEach(func() {
-		Eventually(cf.Cf("delete", appName, "-f"), config.ScaledTimeout(timeout)).Should(Exit(0))
 	})
 
 	AssertLifeCycleBehavior := func(planName string) {
 		serviceInstanceName := randomServiceName()
 		serviceCreated := false
 		serviceBound := false
+		appRunning := false
 
-		BeforeEach(func() {
+		It("can create and bind to a service instance using "+planName, func() {
 			Eventually(cf.Cf("create-service", config.ServiceName, planName, serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
 			serviceCreated = true
 			Eventually(cf.Cf("bind-service", appName, serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
 			serviceBound = true
 			Eventually(cf.Cf("start", appName), config.ScaledTimeout(5*time.Minute)).Should(Exit(0))
 			assertAppIsRunning(appName)
+			appRunning = true
 		})
 
-		AfterEach(func() {
-			if serviceBound {
-				Eventually(cf.Cf("unbind-service", appName, serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
-			}
-			if serviceCreated {
-				Eventually(cf.Cf("delete-service", "-f", serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
-			}
-		})
-
-		It("can create, bind to, write to, read from, unbind, and destroy a service instance using the "+planName+" plan", func() {
+		It("manipulate a Postgres database as expected using "+planName+" plan", func() {
+			Ω(appRunning).Should(BeTrue())
 			//Successful endpoint calls respond 200 and their first line is "SUCCESS"
 
 			//Can't get the timestamp from the database if a connection wasn't made.
@@ -344,24 +334,15 @@ var _ = Describe("RDPG Service Broker", func() {
 			fmt.Printf("\n--Verifying that schema %s was dropped.", schemaName)
 			sql = fmt.Sprintf("SELECT schema_name FROM information_schema.schemata WHERE schema_name='%s';", schemaName)
 			Consistently(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).ShouldNot(Or(Say("FAILURE"), Say("\\[")))
-			/* THESE ARE REALLY ONLY VALID FOR THE BDR DATABASE... AND THATS GOING AWAY SO... COMMENTED OUT
-			//Time to start doing some stuff that the database should not allow
-			fmt.Printf("\n--Attempting to create SCHEMA bdr. Failure if this is allowed.")
-			sql = fmt.Sprintf("CREATE SCHEMA bdr;")
-			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("FAILURE"))
+		})
 
-			fmt.Printf("\n--Attempting to drop SCHEMA bdr. Failure if this is allowed.")
-			sql = fmt.Sprintf("DROP SCHEMA bdr;")
-			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("FAILURE"))
-
-			fmt.Printf("\n--Attempting to create table table in schema bdr")
-			sql = fmt.Sprintf("CREATE TABLE bdr.asdf(key varchar(255), value varchar(255));")
-			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("FAILURE"))
-			*/
-			//TODO: Test if table in bdr schema can be modified
-			//TODO: Test if table can be dropped from bdr schema
-			//These can't be done yet - pending the tables of bdr actually becoming visible.
-
+		It("can unbind from and destroy a service instance using"+planName, func() {
+			if serviceBound {
+				Eventually(cf.Cf("unbind-service", appName, serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
+			}
+			if serviceCreated {
+				Eventually(cf.Cf("delete-service", "-f", serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
+			}
 		})
 	}
 
@@ -369,5 +350,9 @@ var _ = Describe("RDPG Service Broker", func() {
 		for _, planName := range config.PlanNames {
 			AssertLifeCycleBehavior(planName)
 		}
+	})
+
+	It("can delete the application", func() {
+		Eventually(cf.Cf("delete", appName, "-f"), config.ScaledTimeout(timeout)).Should(Exit(0))
 	})
 })
