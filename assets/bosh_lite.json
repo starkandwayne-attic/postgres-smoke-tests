@@ -1,7 +1,7 @@
 {
   "service_name": "postgres",
   "plan_names": [
-                     "shared",
+										 "shared",
                      "shared-nr"
                        ],
   "apps_domain": "bosh-lite.com", 

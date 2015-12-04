@@ -142,7 +142,7 @@ var _ = Describe("RDPG Service Broker", func() {
 			serviceCreated = true
 			Eventually(cf.Cf("bind-service", appName, serviceInstanceName), config.ScaledTimeout(timeout)).Should(Exit(0))
 			serviceBound = true
-			Eventually(cf.Cf("start", appName), config.ScaledTimeout(5*time.Minute)).Should(Exit(0))
+			Eventually(cf.Cf("push", appName, "-m", "256M", "-p", appPath, "-s", "cflinuxfs2"), config.ScaledTimeout(timeout)).Should(Exit(0))
 			assertAppIsRunning(appName)
 			appRunning = true
 		})
@@ -150,9 +150,12 @@ var _ = Describe("RDPG Service Broker", func() {
 		It("manipulate a Postgres database as expected using "+planName+" plan", func() {
 			Ω(appRunning).Should(BeTrue())
 			//Successful endpoint calls respond 200 and their first line is "SUCCESS"
+			fmt.Println("\n--Displaying database uri")
+			uri := appUri(appName) + "/uri"
+			Eventually(runner.Curl(uri, "-k", "-X", "GET"), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
 
 			//Can't get the timestamp from the database if a connection wasn't made.
-			uri := appUri(appName) + "/timestamp"
+			uri = appUri(appName) + "/timestamp"
 			fmt.Println("\n--Checking if a connection to the database can be made: ", uri)
 			Eventually(runner.Curl(uri, "-k", "-X", "GET"), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
 			fmt.Println("\n")
@@ -202,19 +205,24 @@ var _ = Describe("RDPG Service Broker", func() {
 				}
 			}
 
+			sql = ""
 			//Now try to throw them into a public-schema table
 			fmt.Printf("\n--Inserting %d entries into public.%s\n", NUM_INSERTIONS, publicTableName)
 			for i := 0; i < NUM_INSERTIONS; i++ {
-				sql = fmt.Sprintf("INSERT INTO public.%s VALUES('%s', %d);", publicTableName, valuesToInsert[i], i)
-				Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
+				sql = sql + fmt.Sprintf("INSERT INTO public.%s VALUES('%s', %d); ", publicTableName, valuesToInsert[i], i)
 			}
+			//Get rid of that trailing space.
+			sql = strings.TrimSuffix(sql, " ")
+			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
 
+			sql = ""
 			//And try to throw them into a user-created table
 			fmt.Printf("\n--Inserting %d entries into user-created table %s.%s\n", NUM_INSERTIONS, schemaName, schemaTableName)
 			for i := 0; i < NUM_INSERTIONS; i++ {
-				sql = fmt.Sprintf("INSERT INTO %s.%s VALUES('%s', %d);", schemaName, schemaTableName, valuesToInsert[i], i)
-				Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
+				sql = sql + fmt.Sprintf("INSERT INTO %s.%s VALUES('%s', %d); ", schemaName, schemaTableName, valuesToInsert[i], i)
 			}
+			sql = strings.TrimSuffix(sql, " ")
+			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
 
 			//Now, poll the values from the database
 			fmt.Printf("\n--Polling each inserted entry to verify its presence in public.%s\n", publicTableName)
@@ -233,20 +241,25 @@ var _ = Describe("RDPG Service Broker", func() {
 				Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say(expectedOutput))
 			}
 
+			sql = ""
 			//Time to update some rows
 			fmt.Printf("\n--Updating the values of each of the rows in public.%s\n", publicTableName)
 			//Originally, all the 'values' should be from 0 to NUM_INSERTIONS (non-inclusive). I guess an update would be to increase all of these by one.
 			//This could definitely fail if two keys ended up being the same...
 			for i := 0; i < NUM_INSERTIONS; i++ {
-				sql = fmt.Sprintf("UPDATE public.%s SET value=%s WHERE key='%s';", publicTableName, strconv.Itoa(i+1), valuesToInsert[i])
-				Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
+				sql = sql + fmt.Sprintf("UPDATE public.%s SET value=%s WHERE key='%s'; ", publicTableName, strconv.Itoa(i+1), valuesToInsert[i])
 			}
+			sql = strings.TrimSuffix(sql, " ")
+			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
+
+			sql = ""
 			//Do the same to the user-created schema table
 			fmt.Printf("\n--Updating the values of each of the rows in %s.%s\n", schemaName, schemaTableName)
 			for i := 0; i < NUM_INSERTIONS; i++ {
-				sql = fmt.Sprintf("UPDATE %s.%s SET value=%s WHERE key='%s';", schemaName, schemaTableName, strconv.Itoa(i+1), valuesToInsert[i])
-				Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
+				sql = sql + fmt.Sprintf("UPDATE %s.%s SET value=%s WHERE key='%s'; ", schemaName, schemaTableName, strconv.Itoa(i+1), valuesToInsert[i])
 			}
+			sql = strings.TrimSuffix(sql, " ")
+			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
 
 			//Now, poll the values from the database
 			fmt.Printf("\n--Polling each inserted entry to verify its presence in public.%s\n", publicTableName)
@@ -283,18 +296,22 @@ var _ = Describe("RDPG Service Broker", func() {
 				Consistently(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).ShouldNot(Or(Say(avoidedOutput), Say("FAILURE")))
 			}
 
+			sql = ""
 			//Clear out all the entries
 			fmt.Printf("\n--Clearing all the table entries out of public.%s\n", publicTableName)
 			for i := 0; i < NUM_INSERTIONS; i++ {
-				sql = fmt.Sprintf("DELETE FROM public.%s WHERE key='%s';", publicTableName, valuesToInsert[i])
-				Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
+				sql = sql + fmt.Sprintf("DELETE FROM public.%s WHERE key='%s'; ", publicTableName, valuesToInsert[i])
 			}
+			strings.TrimSuffix(sql, " ")
+			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
 
+			sql = ""
 			fmt.Printf("\n--Clearing all the table entries out of %s.%s\n", schemaName, schemaTableName)
 			for i := 0; i < NUM_INSERTIONS; i++ {
-				sql = fmt.Sprintf("DELETE FROM %s.%s WHERE key='%s';", schemaName, schemaTableName, valuesToInsert[i])
-				Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
+				sql = sql + fmt.Sprintf("DELETE FROM %s.%s WHERE key='%s'; ", schemaName, schemaTableName, valuesToInsert[i])
 			}
+			strings.TrimSuffix(sql, " ")
+			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
 
 			//Make sure all of the entries were actually cleared
 			fmt.Printf("\n--Verifying that the entries are no longer present in public.%s\n", publicTableName)
@@ -317,11 +334,11 @@ var _ = Describe("RDPG Service Broker", func() {
 			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
 
 			//Polling these tables should be a FAILURE because they no longer exist.
-			fmt.Printf("\n--Verifying that table public.%s\n was deleted", publicTableName)
+			fmt.Printf("\n--Verifying that table public.%s\n was deleted. Curl should return FAILURE", publicTableName)
 			sql = fmt.Sprintf("SELECT * FROM public.%s;", publicTableName)
 			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("FAILURE"))
 
-			fmt.Printf("\n--Verifying that table %s.%s\n was deleted", schemaName, schemaTableName)
+			fmt.Printf("\n--Verifying that table %s.%s\n was deleted. Curl should return FAILURE", schemaName, schemaTableName)
 			sql = fmt.Sprintf("SELECT * FROM %s.%s;", schemaName, schemaTableName)
 			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("FAILURE"))
 
@@ -331,7 +348,7 @@ var _ = Describe("RDPG Service Broker", func() {
 			Eventually(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).Should(Say("SUCCESS"))
 
 			//Make sure that schema is actually gone
-			fmt.Printf("\n--Verifying that schema %s was dropped.", schemaName)
+			fmt.Printf("\n--Verifying that schema %s was dropped. Curl should return FAILURE.", schemaName)
 			sql = fmt.Sprintf("SELECT schema_name FROM information_schema.schemata WHERE schema_name='%s';", schemaName)
 			Consistently(runner.Curl(uri, "-k", "-X", "POST", "-d", "sql="+sql), config.ScaledTimeout(timeout), retryInterval).ShouldNot(Or(Say("FAILURE"), Say("\\[")))
 		})
