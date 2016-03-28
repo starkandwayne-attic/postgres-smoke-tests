@@ -62,6 +62,8 @@ var _ = Describe("RDPG Service Broker", func() {
 
 	var appName string
 
+	var testContext services.Context
+
 	randomServiceName := func() string {
 		return uuid.NewRandom().String()
 	}
@@ -123,7 +125,12 @@ var _ = Describe("RDPG Service Broker", func() {
 			fmt.Println("SET NUM_INSERTIONS TO: " + numInsertionsEnv)
 		}
 		config.TimeoutScale = 3
-		services.NewContext(config.Config, "rdpg-postgres-smoke-test").Setup()
+		testContext = services.NewContext(config.Config, "rdpg-postgres-smoke-test")
+		testContext.Setup()
+	})
+
+	AfterSuite(func() {
+		testContext.Teardown()
 	})
 
 	It("can push the application to Cloud Foundry", func() {
@@ -185,7 +192,6 @@ var _ = Describe("RDPG Service Broker", func() {
 
 			//Let's do some insertions to both tables
 			//First, let's generate the values to insert. I've decided on random values, because the database SHOULD be able to handle that...
-			//  and I hope don't end up regretting that decision for testing reasons.
 			valuesToInsert := make([]string, NUM_INSERTIONS, NUM_INSERTIONS)
 			for i := 0; i < NUM_INSERTIONS; i++ {
 				valuesToInsert[i] = randomName()
